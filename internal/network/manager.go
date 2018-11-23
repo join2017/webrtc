@@ -105,8 +105,13 @@ func (m *Manager) Start(isOffer bool, remoteUfrag, remotePwd string, dtlsCert *x
 
 	m.dtlsConn = dtlsConn
 
-	serverWriteKey, clientWriteKey := dtlsConn.WritePair()
-	m.CreateContextSRTP(serverWriteKey, clientWriteKey, "") // TODO: Profile?
+	keyingMaterial, err := dtlsConn.ExportKeyingMaterial([]byte("EXTRACTOR-dtls_srtp"), nil, (srtpMasterKeyLen*2)+(srtpMasterKeySaltLen*2))
+	if err != nil {
+		panic(err)
+	}
+	if err := m.CreateContextSRTP(keyingMaterial); err != nil {
+		panic(err)
+	}
 
 	// TODO: Verify fingerprint
 	// fp, _ := Fingerprint(dtlsConn.RemoteCertificate(), "sha-256")
