@@ -20,7 +20,7 @@ EndOfMessage
 }
 
 lint_commit_message() {
-    if [[ "$(echo "$1" | awk 'NR == 2 {print $1;}' | wc -c)" -ne 1 ]]; then
+    if [[ "$(echo "$1" | wc -l)" -gt 1 ]] && [[ "$(echo "$1" | awk 'NR == 2 {print $1;}' | wc -c)" -ne 1 ]]; then
         display_commit_message_error "$1" 'Separate subject from body with a blank line'
     fi
 
